@@ -1,0 +1,52 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+\usepackage{minted}
+
+\title{UAV Software Engineering: Build Systems}
+\author{CMake and Out-of-Source Builds}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{Theoretical Foundation: The Need for Build Systems}
+In large-scale robotics projects like PX4 firmware or ROS 2 workspaces, software is composed of thousands of source files, 
+external libraries, and cross-dependencies. Compiling these ecosystems manually via terminal commands (e.g., \texttt{g++ main.cpp -o node}) 
+is unmaintainable. 
+
+To solve this, the industry standard is \textbf{CMake}. 
+CMake is not a compiler itself; rather, it is a cross-platform build system generator. 
+It reads high-level configuration rules and automatically generates the low-level build files (such as Makefiles) 
+required to compile the project efficiently.
+
+\section{UAV System Application: Configuring \texttt{CMakeLists.txt}}
+The core of CMake configuration is a text file strictly named \texttt{CMakeLists.txt}. 
+To build a multi-threaded telemetry node, the minimal configuration requires defining the project, adding the executable, and linking necessary libraries:
+
+\begin{itemize}
+    \item \textbf{Basic Setup}: \texttt{cmake\_minimum\_required(VERSION 3.10)} and \texttt{project(telemetry\_node)} define the baseline.
+    \item \textbf{Compilation Target}: \texttt{add\_executable(telemetry\_node main.cpp)} instructs the system to compile the source code into an executable file.
+    \item \textbf{Dependency Linking}: While C++ Standard Template Library (STL) headers like \texttt{<queue>} or \texttt{<mutex>} 
+    are natively included by the compiler, external OS-level libraries are not. To use hardware threads on Linux, we must explicitly 
+    find and link the system's thread library using \texttt{find\_package(Threads REQUIRED)} and 
+    \texttt{target\_link\_libraries(telemetry\_node Threads::Threads)}.
+\end{itemize}
+
+\section{Implementation Details: Out-of-Source Builds}
+In professional C++ development, build artifacts (Makefiles, object files, binaries, and cache files) must never pollute the source code directory. 
+This is solved by utilizing an \textbf{out-of-source build} strategy:
+
+\begin{enumerate}
+    \item Create an isolated directory: \texttt{mkdir build} and \texttt{cd build}.
+    \item Generate build files targeting the parent directory: \texttt{cmake ..}
+    \item Compile the binary: \texttt{make}
+    \item Execute the resulting program locally: \texttt{./telemetry\_node}
+\end{enumerate}
+
+To maintain a clean version control history in Git, the \texttt{build/} directory must be explicitly added to the \texttt{.gitignore} file. 
+This ensures that machine-specific compiled binaries and temporary artifacts are never committed to the remote repository.
+
+\end{document}
