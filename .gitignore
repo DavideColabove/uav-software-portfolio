@@ -1,0 +1,13 @@
+.vscode/
+*/*/build/
+misc/
+
+*.o
+*.out
+*.log
+
+!*.cpp
+!*.hpp
+!*.h
+!*.md
+!*.gitignore
