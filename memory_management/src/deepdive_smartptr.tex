@@ -13,10 +13,10 @@
 \maketitle
 
 \section{RAII paradigm}
-In the critical UAV context memory leak is just unacceptable. 
-Modern C++ uses RAII (Resource Acquisition Is Initialization) to mitigated the problem. 
-Memory allocation happens in the object constructor and the deallocation happens in the distructure. 
-When the object goes out of scope, the memory get automatically deallocated, granting a fixed execution time (which is around 400Hz in the loops).
+In the critical UAV contextm memory leak is just unacceptable. 
+Modern C++ uses RAII (Resource Acquisition Is Initialization) to mitigate the problem. 
+Memory allocation happens in the object constructor and the deallocation happens in the distructor. 
+When the object goes out of scope, the memory gets automatically deallocated, granting a fixed execution time (which is around 400Hz in the loops).
 
 \section{\texttt{std::unique\_ptr} and Ownership}
 \texttt{std::unique\_ptr} it grants the exclusive ownership of a memory block allocated on the heap. 
