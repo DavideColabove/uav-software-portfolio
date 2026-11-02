@@ -1,0 +1,11 @@
+.vscode/
+
+*.o
+*.out
+*.log
+
+!*.cpp
+!*.hpp
+!*.h
+!*.md
+!*.gitignore

@@ -1,0 +1,37 @@
+\documentclass{article}
+\usepackage[utf8]{inputenc}
+\usepackage{geometry}
+\geometry{a4paper, margin=1in}
+\usepackage{minted}
+
+\title{UAV Software Engineering: C++ Memory Management}
+\author{Smart Pointers e RAII}
+\date{}
+
+\begin{document}
+
+\maketitle
+
+\section{RAII paradigm}
+In the critical UAV context memory leak is just unacceptable. 
+Modern C++ uses RAII (Resource Acquisition Is Initialization) to mitigated the problem. 
+Memory allocation happens in the object constructor and the deallocation happens in the distructure. 
+When the object goes out of scope, the memory get automatically deallocated, granting a fixed execution time (which is around 400Hz in the loops).
+
+\section{\texttt{std::unique\_ptr} and Ownership}
+\texttt{std::unique\_ptr} it grants the exclusive ownership of a memory block allocated on the heap. 
+Note that it doesn't add any sort of overhead over the standard allocation and destruction using \texttt{new} and \texttt{delete} (raw pointer).
+Since the ownership is exclusive, an \texttt{unique\_ptr} can not be copied, but only moved using \texttt{std::move()}. 
+This explicit ownership transfer prevents hidden bugs such as \textit{dangling references} or \textit{double free}, which are common on legacy systems.
+
+\section{Implementation Details: \texttt{make\_unique} and Observers}
+Modern C++ (C++14 and later) strictly recommends using \texttt{std::make\_unique} rather than calling \texttt{new} directly. 
+This approach guarantees exception safety; if an exception is thrown during object construction, the memory is automatically reclaimed, 
+eliminating a subtle source of leaks.
+
+While \texttt{unique\_ptr} enforces exclusive ownership, other parts of the drone's system may need to read the data without taking ownership.
+The \texttt{.get()} method exposes the underlying raw pointer safely, acting strictly as an observer. 
+Additionally, the ownership state can be verified through implicit boolean evaluation (e.g., \texttt{if (!ptr)}), 
+which is critical to check after a \texttt{std::move()} operation to ensure the original pointer is now null and safe from accidental use.
+
+\end{document}
