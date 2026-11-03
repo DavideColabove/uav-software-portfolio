@@ -27,7 +27,7 @@ This repository documents my 3-month intensive journey to master software engine
 ### Phase 3: Vision & Precision Landing (Month 3)
 * `05_vision_landing/`: A complete pipeline where the simulated drone detects a visual marker using PyTorch/OpenCV and executes an autonomous precision landing.
 
-## ⚙️ Industrial Validation & CI/CD
+## Industrial Validation & CI/CD
 
 To ensure the reliability required for mission-critical UAV software, this repository enforces strict Continuous Integration pipelines on every commit:
 
