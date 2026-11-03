@@ -2,6 +2,8 @@
 
 [![CMake Build](https://github.com/DavideColabove/uav-software-portfolio/actions/workflows/build.yml/badge.svg)](https://github.com/DavideColabove/uav-software-portfolio/actions/workflows/build.yml)
 
+[![Memory & Thread Safety](https://github.com/DavideColabove/uav-software-portfolio/actions/workflows/sanitizers.yml/badge.svg)](https://github.com/DavideColabove/uav-software-portfolio/actions/workflows/sanitizers.yml)
+
 ## About This Project
 This repository documents my 3-month intensive journey to master software engineering for Unmanned Aerial Vehicles (UAVs). The ultimate goal is to build a robust skill set for the autonomous last-mile delivery sector (medical and commercial logistics) and prepare for a 6-month internship in Europe.
 
@@ -24,5 +26,13 @@ This repository documents my 3-month intensive journey to master software engine
 
 ### Phase 3: Vision & Precision Landing (Month 3)
 * `05_vision_landing/`: A complete pipeline where the simulated drone detects a visual marker using PyTorch/OpenCV and executes an autonomous precision landing.
+
+## ⚙️ Industrial Validation & CI/CD
+
+To ensure the reliability required for mission-critical UAV software, this repository enforces strict Continuous Integration pipelines on every commit:
+
+* **Automated Build System:** Out-of-source CMake orchestration compiling multiple independent modules into a centralized binary directory.
+* **Static Analysis:** `clang-tidy` enforces modern C++17 best practices, catching implicit conversions and logical vulnerabilities before execution.
+* **Dynamic Memory & Thread Safety:** Automated runtime testing of all executable nodes instrumented with AddressSanitizer (ASan) and ThreadSanitizer (TSan). This guarantees zero memory leaks (via strict RAII) and prevents data races in highly concurrent publisher/subscriber environments.
 
 ## How to Build
