@@ -1,0 +1,31 @@
+name: Memory & Thread Safety
+
+on: [push, pull_request]
+
+jobs:
+  dynamic-sanitizers:
+    runs-on: ubuntu-22.04
+    strategy:
+      matrix:
+        sanitizer: [address, thread]
+    steps:
+      - uses: actions/checkout@v4
+      - name: Compilazione con ${{ matrix.sanitizer }} Sanitizer
+        run: |
+          mkdir build && cd build
+          cmake -DCMAKE_CXX_FLAGS="-fsanitize=${{ matrix.sanitizer }} -g" ..
+          make
+      - name: Test a runtime
+        run: |
+          # Modifica il percorso in base a dove viene generato l'eseguibile
+          cd build/concurrency/src 
+          ./telemetry_node
+
+  static-analysis:
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+      - name: Installa Clang-Tidy
+        run: sudo apt-get update && sudo apt-get install -y clang-tidy
+      - name: Esegui Clang-Tidy
+        run: clang-tidy concurrency/src/*.cpp memory_management/*.cpp -- -std=c++17
