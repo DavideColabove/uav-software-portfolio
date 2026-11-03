@@ -1,5 +1,7 @@
 # UAV Software Engineering Portfolio
 
+[![CMake Build](https://github.com/DavideColabove/uav-software-portfolio/actions/workflows/build.yml/badge.svg)](https://github.com/DavideColabove/uav-software-portfolio/actions/workflows/build.yml)
+
 ## About This Project
 This repository documents my 3-month intensive journey to master software engineering for Unmanned Aerial Vehicles (UAVs). The ultimate goal is to build a robust skill set for the autonomous last-mile delivery sector (medical and commercial logistics) and prepare for a 6-month internship in Europe.
 
