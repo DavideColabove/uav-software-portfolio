@@ -3,10 +3,10 @@ name: LaTeX Documentation
 on:
   push:
     paths:
-      - '**/**/*.tex'
+      - '**/*.tex'
   pull_request:
     paths:
-      - '**/**/*.tex'
+      - '**/*.tex'
 
 jobs:
   build-pdf:
@@ -18,7 +18,7 @@ jobs:
       - name: Compilazione Deep Dive
         uses: xu-cheng/latex-action@v3
         with:
-          root_file: "**/**/*.tex"
+          root_file: "**/*.tex"
 
       - name: Upload PDF
         uses: actions/upload-artifact@v4

@@ -1,0 +1,3 @@
+/home/dav/Desktop/uav-software-portfolio/concurrency/src/build/CMakeFiles/telemetry_node.dir
+/home/dav/Desktop/uav-software-portfolio/concurrency/src/build/CMakeFiles/edit_cache.dir
+/home/dav/Desktop/uav-software-portfolio/concurrency/src/build/CMakeFiles/rebuild_cache.dir

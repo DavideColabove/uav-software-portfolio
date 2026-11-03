@@ -32,4 +32,4 @@ jobs:
       - name: Installa Clang-Tidy
         run: sudo apt-get update && sudo apt-get install -y clang-tidy
       - name: Esegui Clang-Tidy
-        run: clang-tidy concurrency/src/*.cpp memory_management/src/*.cpp -- -std=c++17
+        run: clang-tidy 01_cpp_robotics/concurrency/src/*.cpp 01_cpp_robotics/memory_management/src/*.cpp -- -std=c++17
