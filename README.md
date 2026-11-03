@@ -4,6 +4,8 @@
 
 [![Memory & Thread Safety](https://github.com/DavideColabove/uav-software-portfolio/actions/workflows/sanitizers.yml/badge.svg)](https://github.com/DavideColabove/uav-software-portfolio/actions/workflows/sanitizers.yml)
 
+[![LaTeX Documentation](https://github.com/DavideColabove/uav-software-portfolio/actions/workflows/latex.yml/badge.svg)](https://github.com/DavideColabove/uav-software-portfolio/actions/workflows/latex.yml)
+
 ## About This Project
 This repository documents my 3-month intensive journey to master software engineering for Unmanned Aerial Vehicles (UAVs). The ultimate goal is to build a robust skill set for the autonomous last-mile delivery sector (medical and commercial logistics) and prepare for a 6-month internship in Europe.
 
