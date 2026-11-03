@@ -17,7 +17,7 @@ jobs:
           make
       - name: Test a runtime
         run: |
-            cd bin/
+            cd build/out
             for nodo in *; do
                     if [ -f "$nodo" ] && [ -x "$nodo" ]; then
                     echo ">>> Dynamic test on node: $nodo"

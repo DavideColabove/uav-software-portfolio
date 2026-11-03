@@ -1,6 +1,7 @@
 .vscode/
 */*/build/
 misc/
+bin/
 
 *.o
 *.out
