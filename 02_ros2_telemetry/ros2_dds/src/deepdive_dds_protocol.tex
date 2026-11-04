@@ -51,6 +51,14 @@ DDS uses \textbf{Domain IDs}. Only nodes (DomainParticipants) sharing the same D
 Data structures are strictly defined using the \textbf{Interface Definition Language (IDL)}, ensuring memory alignment across different architectures 
 (e.g., x86 ground stations communicating with ARM-based flight controllers).
 
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{../../../assets/img/Data-centric-publish-subscribe-DCPS-model.png}
+    \caption{Publish-Subscribe Architecture and access through Topic.}
+    \label{fig:nome-etichetta}
+\end{figure}
+
+
 \section{The Wire Protocol: RTPS and Discovery}
 Under the hood, DDS utilizes the \textbf{Real-Time Publish-Subscribe (RTPS)} wire protocol, typically over UDP. 
 The decentralized network avoids Single Points of Failure through a two-phase discovery mechanism:
