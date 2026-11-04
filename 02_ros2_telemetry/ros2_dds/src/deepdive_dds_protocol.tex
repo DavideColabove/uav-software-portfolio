@@ -43,7 +43,7 @@ requirements (e.g., DO-178C for aerospace) without rewriting application logic.
 
 \section{Applicative Architecture: DCPS and Domains}
 Unlike message-centric protocols, DDS employs a \textbf{Data-Centric Publish-Subscribe (DCPS)} model. 
-It creates the illusion of a \textit{Global Data Space (GDS)}—a distributed, shared memory database. Publishers write updates to this space, 
+It creates the illusion of a \textit{Global Data Space (GDS)} which is a distributed, shared memory database. Publishers write updates to this space, 
 and subscribers read from it. 
 
 To isolate traffic on the same physical network (e.g., running a simulation on the same Wi-Fi as a real drone), 
