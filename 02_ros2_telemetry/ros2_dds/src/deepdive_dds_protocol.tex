@@ -3,19 +3,96 @@
 \usepackage{geometry}
 \geometry{a4paper, margin=1in}
 \usepackage{minted}
+\usepackage{graphicx}
 
-\title{UAV Software Engineering: [Broad Topic]}
-\author{[Specific Subtopic]}
+\title{UAV Software Engineering: ROS 2 Architecture}
+\author{The DDS Protocol and Publish/Subscribe Pattern}
 \date{}
 
 \begin{document}
 
 \maketitle
 
-\section{Theoretical Foundation}
-% Deep dive into the computer science concepts...
+\section{The Middleware: Data Distribution Service (DDS)}
+Historically, robotic frameworks relied on centralized brokers (e.g., ROS 1's \texttt{roscore}). 
+In mission-critical UAV systems, a centralized broker is a Single Point of Failure (SPOF). ROS 2 mitigates this by abstracting its communication layer over 
+the \textbf{Data Distribution Service (DDS)}, an Object Management Group (OMG) standard designed for real-time, deterministic, and distributed systems.
 
-\section{UAV System Application}
-% How this specific concept is applied in drone flight software, avionics, or ROS2...
+DDS operates purely Peer-to-Peer (P2P). 
+Nodes discover each other dynamically using the Real-Time Publish Subscribe (RTPS) protocol over UDP multicast. 
+Once discovered, Publishers and Subscribers establish direct data channels, eliminating the need for a central master.
+
+\section{The Publish-Subscribe Architecture}
+DDS expands on the Producer-Consumer pattern implemented in multi-threading. 
+Instead of sharing a memory queue, nodes communicate asynchronously via \textbf{Topics}. A Publisher writes data to a Topic, 
+and multiple Subscribers can read from it without knowing the Publisher's identity or location. This strict decoupling allows developers to hot-swap 
+or scale subsystems (e.g., swapping a physical camera node with a SITL simulation node) without altering the core flight controller.
+
+\begin{figure}[htbp]
+    \centering
+    \includegraphics[width=0.6\textwidth]{../../../assets/img/publisher_subscriber.png}
+    \caption{Publish-Subscribe Architecture and access through Topic.}
+    \label{fig:nome-etichetta}
+\end{figure}
+
+\section{OMG Specification and DDS Vendors}
+DDS is not a software framework but a formal specification created by the \textbf{Object Management Group (OMG)} for real-time, 
+mission-critical systems. Because it is an open standard, ROS 2 relies on third-party implementations (DDS Vendors) such as eProsima Fast DDS, 
+Eclipse Cyclone DDS, or RTI Connext. This allows robotics engineers to swap the underlying network engine based on certification 
+requirements (e.g., DO-178C for aerospace) without rewriting application logic.
+
+\section{Applicative Architecture: DCPS and Domains}
+Unlike message-centric protocols, DDS employs a \textbf{Data-Centric Publish-Subscribe (DCPS)} model. 
+It creates the illusion of a \textit{Global Data Space (GDS)}—a distributed, shared memory database. Publishers write updates to this space, 
+and subscribers read from it. 
+
+To isolate traffic on the same physical network (e.g., running a simulation on the same Wi-Fi as a real drone), 
+DDS uses \textbf{Domain IDs}. Only nodes (DomainParticipants) sharing the same Domain ID can discover each other and share data. 
+Data structures are strictly defined using the \textbf{Interface Definition Language (IDL)}, ensuring memory alignment across different architectures 
+(e.g., x86 ground stations communicating with ARM-based flight controllers).
+
+\section{The Wire Protocol: RTPS and Discovery}
+Under the hood, DDS utilizes the \textbf{Real-Time Publish-Subscribe (RTPS)} wire protocol, typically over UDP. 
+The decentralized network avoids Single Points of Failure through a two-phase discovery mechanism:
+\begin{enumerate}
+    \item \textbf{Participant Discovery (SPDP):} Nodes broadcast UDP multicast packets to announce their presence on a specific Domain ID.
+    \item \textbf{Endpoint Discovery (SEDP):} Once participants discover each other, they use UDP unicast to exchange their Topics, Data Types, and QoS profiles. 
+    If the QoS profiles are compatible (e.g., a Reliable publisher matched with a Reliable subscriber), the data connection is established.
+\end{enumerate}
+
+While SPDP relies on UDP multicast, complex UAV networks (e.g., BVLOS flights over LTE or ground stations behind VPNs) often block multicast traffic. 
+To solve this, DDS implementations offer \textbf{Unicast Discovery} via Initial Peers lists or centralized \textbf{Discovery Servers}, 
+allowing nodes to bypass multicast and connect directly via known IP addresses.
+
+\section{ROS 2 Abstraction: The RMW Layer}
+ROS 2 abstracts the complexity of DDS via the \textbf{ROS Middleware (RMW)} interface. 
+Developers write C++ code using the ROS Client Library (\texttt{rclcpp}). The RMW layer translates these API calls into the specific vendor's DDS functions. 
+This abstraction allows instantaneous swapping of the DDS implementation by simply changing the \texttt{RMW\_IMPLEMENTATION} environment variable, 
+ensuring extreme modularity in UAV software stacks.
+
+\section{Quality of Service (QoS) Policies for UAVs}
+The defining feature of DDS is its Quality of Service (QoS) profiles, which allow developers to tune the network behavior to the physical constraints 
+of drone data links (e.g., lossy telemetry radios). Key policies include:
+
+\begin{itemize}
+    \item \textbf{Reliability:} 
+    \begin{itemize}
+        \item \textit{Best Effort:} The publisher sends messages once. Ideal for high-frequency sensor data (IMU, GPS) 
+        where stale data is useless and bandwidth is scarce.
+        \item \textit{Reliable:} The publisher retransmits unacknowledged packets. Mandatory for critical state commands (e.g., Arming, Mission Waypoints).
+    \end{itemize}
+    \item \textbf{Durability:}
+    \begin{itemize}
+        \item \textit{Volatile:} Late-joining subscribers only receive data published after they connect.
+        \item \textit{Transient Local:} The publisher saves a history of messages and sends them to late-joining subscribers. 
+        Useful for static environment data (e.g., map configurations).
+    \end{itemize}
+    \item \textbf{History:} Defines how many messages to keep in the queue before overwriting them (e.g., \texttt{KEEP\_LAST} with depth $N$, or \texttt{KEEP\_ALL}).
+    \item \textbf{Liveliness:} Determines how the system monitors if a node is still active. 
+        \begin{itemize}
+            \item \textit{Automatic:} The DDS middleware automatically asserts liveliness as long as the node exists.
+            \item \textit{Manual By Topic:} The application must explicitly publish data or assert liveliness within a defined lease duration. If a flight controller stops receiving liveliness assertions from a sensor node, it can immediately trigger a hardware failsafe.
+        \end{itemize}
+\end{itemize}
 
 \end{document}
